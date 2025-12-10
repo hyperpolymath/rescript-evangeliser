@@ -1,0 +1,36 @@
+= rescript-evangeliser - Citation Guide
+:toc:
+
+== BibTeX
+
+[source,bibtex]
+----
+@software{rescript-evangeliser_2025,
+  author = {Polymath, Hyper},
+  title = {rescript-evangeliser},
+  year = {2025},
+  url = {https://github.com/hyperpolymath/rescript-evangeliser},
+  license = {AGPL-3.0-or-later}
+}
+----
+
+== Harvard Style
+
+Polymath, H. (2025) _rescript-evangeliser_ [Computer software]. Available at: https://github.com/hyperpolymath/rescript-evangeliser
+
+== OSCOLA
+
+Hyper Polymath, 'rescript-evangeliser' (2025) <https://github.com/hyperpolymath/rescript-evangeliser>
+
+== MLA
+
+Polymath, Hyper. "rescript-evangeliser." 2025, github.com/hyperpolymath/rescript-evangeliser.
+
+== APA 7
+
+Polymath, H. (2025). _rescript-evangeliser_ [Computer software]. GitHub. https://github.com/hyperpolymath/rescript-evangeliser
+
+== See Also
+
+* link:../CITATION.cff[CITATION.cff]
+* link:../codemeta.json[codemeta.json]
