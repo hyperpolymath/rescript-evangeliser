@@ -1,67 +1,82 @@
 = ReScript Evangeliser
 
-[![RSR Bronze](https://img.shields.io/badge/RSR-Bronze-CD7F32)](docs/RSR_COMPLIANCE.md)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE-MIT.txt)
-[![License: Palimpsest](https://img.shields.io/badge/License-Palimpsest%20v0.8-blue.svg)](LICENSE-PALIMPSEST.txt)
-[![TPCF: Perimeter 3](https://img.shields.io/badge/TPCF-Perimeter%203-green.svg)](docs/TPCF.md)
-[![Offline First](https://img.shields.io/badge/Offline-First-orange.svg)](docs/ARCHITECTURE.md)
+image:https://img.shields.io/badge/RSR-Bronze-CD7F32[RSR Bronze,link=docs/RSR_COMPLIANCE.md]
+image:https://img.shields.io/badge/License-MIT-yellow.svg[License: MIT,link=LICENSE-MIT.txt]
+image:https://img.shields.io/badge/License-Palimpsest%20v0.8-blue.svg[License: Palimpsest,link=LICENSE-PALIMPSEST.txt]
+image:https://img.shields.io/badge/TPCF-Perimeter%203-green.svg[TPCF: Perimeter 3,link=docs/TPCF.md]
+image:https://img.shields.io/badge/ReScript-First-E8532F.svg[ReScript First]
+image:https://img.shields.io/badge/Deno-Runtime-000000.svg[Deno Runtime]
 
-> *Celebrate good, minimize bad, show better* — A VS Code extension that teaches JavaScript developers ReScript through progressive code transformation, without shame.
+> *Celebrate good, minimize bad, show better* — A pattern library and educational toolkit that teaches JavaScript developers ReScript through progressive code transformation, without shame.
 
 == What is This?
 
-ReScript Evangeliser is a VS Code extension that helps JavaScript/TypeScript developers learn ReScript by:
+ReScript Evangeliser is a library and toolkit that helps JavaScript developers learn ReScript by:
 
-- 🔍 *Detecting patterns* in your existing JS/TS code
-- 🔄 *Showing transformations* to equivalent ReScript code
-- 💬 *Explaining with encouragement* using the "You were close!" philosophy
-- 📊 *Visualizing concepts* with Makaton-inspired glyphs
-- 🎯 *Progressive disclosure* through 4 view layers (RAW → FOLDED → GLYPHED → WYSIWYG)
+* 🔍 *Detecting patterns* in existing JS code
+* 🔄 *Showing transformations* to equivalent ReScript code
+* 💬 *Explaining with encouragement* using the "You were close!" philosophy
+* 📊 *Visualizing concepts* with Makaton-inspired glyphs
+* 🎯 *Progressive disclosure* through 4 view layers (RAW → FOLDED → GLYPHED → WYSIWYG)
 
 *We never shame developers.* Your JavaScript is good! ReScript just makes some things even better.
 
 == Quick Start
 
+=== Prerequisites
+
+* https://deno.land[Deno] (latest stable)
+* https://rescript-lang.org[ReScript] 11+
+
 === Installation
 
-```bash
-= Clone the repository
+[source,bash]
+----
+# Clone the repository
 git clone https://github.com/Hyperpolymath/rescript-evangeliser.git
-cd rescript-evangeliser/extension
+cd rescript-evangeliser
 
-= Install dependencies (zero external runtime dependencies for the extension itself)
-npm install
+# Install dependencies
+just install
 
-= Compile
-npm run compile
+# Build ReScript sources
+just build
 
-= Run tests
-npm test
+# Run validation
+just validate
+----
 
-= Launch in VS Code
-= Press F5 or Run > Start Debugging
-```
+=== Development
 
-=== Usage
+[source,bash]
+----
+# Watch mode for development
+just watch
 
-1. Open a JavaScript or TypeScript file in VS Code
-2. Press `Ctrl+Shift+R` (or `Cmd+Shift+R` on Mac) to transform selected code
-3. Or use Command Palette: `ReScript: Show Transformation Panel`
-4. Explore 50+ patterns across 4 view layers!
+# Run tests
+just test
+
+# Format code
+just fmt
+
+# Full CI simulation
+just ci
+----
 
 == Features
 
 === 50+ Transformation Patterns
 
 Categories include:
-- Null safety → Option types
-- Async/await → Promise types
-- Try/catch → Result types
-- Array operations → Pipe operator
-- Conditionals → Pattern matching
-- OOP → Functional programming
-- Classes → Records
-- And many more!
+
+* Null safety → Option types
+* Async/await → Promise types
+* Try/catch → Result types
+* Array operations → Pipe operator
+* Conditionals → Pattern matching
+* OOP → Functional programming
+* Classes → Records
+* And many more!
 
 === Four View Layers
 
@@ -73,36 +88,58 @@ Categories include:
 === Makaton-Inspired Glyphs
 
 Visual symbols that transcend syntax:
-- 🛡️ Shield (null safety)
-- 🔄 Transform (data transformation)
-- ➡️ Flow (pipe operator)
-- 🌿 Branch (pattern matching)
-- 💎 Crystal (immutability)
-- And 16 more!
 
-== RSR Compliance
+* 🛡️ Shield (null safety)
+* 🔄 Transform (data transformation)
+* ➡️ Flow (pipe operator)
+* 🌿 Branch (pattern matching)
+* 💎 Crystal (immutability)
+* And 16 more!
 
-This project follows the *Rhodium Standard Repository (RSR)* framework:
+== Technology Stack
 
-- ✅ *Type Safety*: TypeScript with strict mode, ReScript examples
-- ✅ *Offline First*: Zero network dependencies, works air-gapped
-- ✅ *Complete Documentation*: See [docs/](docs/)
-- ✅ *Security First*: See [SECURITY.md](SECURITY.md)
-- ✅ *Open Governance*: TPCF Perimeter 3 (Community Sandbox)
-- ✅ *Dual Licensed*: MIT + Palimpsest v0.8
-- ✅ *100% Test Coverage*: `npm test` to verify
-- ✅ *Build Reproducibility*: Nix flake included
+=== Primary Technologies
 
-See [RSR_COMPLIANCE.md](docs/RSR_COMPLIANCE.md) for full details.
+* *ReScript*: Core application logic (Types, Patterns, Glyphs, Narrative)
+* *Deno*: Runtime, package management, build scripts
+* *Nickel*: Type-safe configuration
 
-== TPCF: Community Sandbox (Perimeter 3)
+=== Language Policy
 
-This project uses the *Tri-Perimeter Contribution Framework*:
+Per Hyperpolymath Standard:
 
-- *Perimeter 3*: Fully open to community contributions
-- No approval required for pull requests (automated review)
-- Community-driven governance
-- See [TPCF.md](docs/TPCF.md) for details
+[cols="2,3"]
+|===
+|*Allowed* |*Banned*
+
+|ReScript |TypeScript
+|Deno |Node.js/npm/bun
+|justfile |Makefile
+|Nickel |YAML/JSON for config
+|===
+
+== Project Structure
+
+[source]
+----
+rescript-evangeliser/
+├── src/                  # ReScript source files
+│   ├── Types.res         # Core type definitions
+│   ├── Glyphs.res        # Makaton-inspired symbol system
+│   ├── Narrative.res     # Encouraging message generation
+│   └── Patterns.res      # 50+ transformation patterns
+├── scripts/              # Deno build/validation scripts
+│   ├── build.ts
+│   ├── clean.ts
+│   └── validate.ts
+├── docs/                 # Documentation
+├── rescript.json         # ReScript configuration
+├── deno.json             # Deno configuration
+├── justfile              # Task orchestration
+├── Mustfile.epx          # Deployment contract
+├── config.ncl            # Nickel configuration
+└── CLAUDE.md             # AI context
+----
 
 == Philosophy: "Celebrate Good, Minimize Bad, Show Better"
 
@@ -115,123 +152,74 @@ We *never* shame developers. Instead:
 5. *Example*: Provide concrete, encouraging examples
 
 Example narrative:
-> ✨ *You were close!* You're already thinking about null and undefined - that's great defensive programming!
->
-> 💭 The only small thing is that it's easy to forget one of these checks somewhere...
->
-> 🚀 *Even better:* ReScript's Option type makes null safety automatic - you literally can't forget a check!
 
-== Architecture
+____
+✨ *You were close!* You're already thinking about null and undefined - that's great defensive programming!
 
-=== Offline-First Design
+💭 The only small thing is that it's easy to forget one of these checks somewhere...
 
-- *Zero network dependencies* at runtime
-- All patterns stored locally
-- Works in air-gapped environments
-- No telemetry without explicit opt-in (privacy-preserving)
+🚀 *Even better:* ReScript's Option type makes null safety automatic - you literally can't forget a check!
+____
 
-=== Performance Targets
+== RSR Compliance
 
-- ⚡ <300ms pattern detection
-- 💾 <100MB memory usage
-- 🚀 <50ms UI response time
-- All targets *exceeded* in current build (50-100ms typical)
+This project follows the *Rhodium Standard Repository (RSR)* framework:
 
-=== Technology Stack
+* ✅ *Type Safety*: ReScript with full type inference
+* ✅ *Offline First*: Zero network dependencies
+* ✅ *Complete Documentation*: See link:docs/[docs/]
+* ✅ *Security First*: See link:SECURITY.md[SECURITY.md]
+* ✅ *Open Governance*: TPCF Perimeter 3 (Community Sandbox)
+* ✅ *Dual Licensed*: MIT + Palimpsest v0.8
+* ✅ *Build Reproducibility*: Nix flake included
 
-- *TypeScript*: VS Code extension development
-- *Babel Parser*: AST-based pattern matching
-- *ReScript*: Example transformations
-- *No external runtime dependencies*: Self-contained
-
-== Project Structure
-
-```
-rescript-evangeliser/
-├── extension/               # VS Code extension
-│   ├── src/
-│   │   ├── extension.ts          # Main entry point
-│   │   ├── types.ts              # TypeScript type definitions
-│   │   ├── glyphs.ts             # Makaton-inspired symbol system
-│   │   ├── narrative.ts          # Encouraging message generation
-│   │   ├── patterns/
-│   │   │   └── pattern-library.ts  # 50+ transformation patterns
-│   │   ├── webview/
-│   │   │   └── transformation-panel.ts  # Four-layer UI
-│   │   └── test/                 # Comprehensive tests
-│   ├── examples/            # JavaScript examples for testing
-│   └── package.json         # Zero runtime dependencies
-├── examples/                # ReScript example projects
-│   └── rhodium-minimal/     # Project 1: Stack (RSR reference)
-├── docs/                    # Complete documentation
-├── .well-known/            # RFC 9116 security.txt, ai.txt, humans.txt
-└── CLAUDE.md               # AI context (you are here!)
-```
+See link:docs/RSR_COMPLIANCE.md[RSR_COMPLIANCE.md] for full details.
 
 == Documentation
 
-- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - Technical architecture
-- [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute
-- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - Community guidelines
-- [SECURITY.md](SECURITY.md) - Security policies
-- [CHANGELOG.md](CHANGELOG.md) - Version history
-- [RSR_COMPLIANCE.md](docs/RSR_COMPLIANCE.md) - RSR framework compliance
-- [TPCF.md](docs/TPCF.md) - Contribution framework
-- [PATTERN_AUTHORING.md](docs/PATTERN_AUTHORING.md) - Write your own patterns
+* link:CONTRIBUTING.md[CONTRIBUTING.md] - How to contribute
+* link:CODE_OF_CONDUCT.md[CODE_OF_CONDUCT.md] - Community guidelines
+* link:SECURITY.md[SECURITY.md] - Security policies
+* link:CHANGELOG.md[CHANGELOG.md] - Version history
+* link:docs/RSR_COMPLIANCE.md[RSR_COMPLIANCE.md] - RSR framework compliance
+* link:docs/TPCF.md[TPCF.md] - Contribution framework
 
 == Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
+We welcome contributions! See link:CONTRIBUTING.md[CONTRIBUTING.md] for:
 
-- Code of Conduct
-- Development setup
-- Pattern authoring guide
-- Testing requirements
-- Pull request process
+* Code of Conduct
+* Development setup
+* Pattern authoring guide
+* Testing requirements
+* Pull request process
 
 This is a *TPCF Perimeter 3* project - all contributions are welcome!
-
-== Security
-
-Security is a first-class concern. See [SECURITY.md](SECURITY.md) for:
-
-- Vulnerability reporting process
-- Security architecture (10+ dimensions)
-- Supply chain security
-- Privacy guarantees
-
-Also see [.well-known/security.txt](.well-known/security.txt) (RFC 9116 compliant).
 
 == Licenses
 
 This project is *dual-licensed*:
 
-1. *MIT License* - See [LICENSE-MIT.txt](LICENSE-MIT.txt)
-2. *Palimpsest License v0.8* - See [LICENSE-PALIMPSEST.txt](LICENSE-PALIMPSEST.txt)
+1. *MIT License* - See link:LICENSE-MIT.txt[LICENSE-MIT.txt]
+2. *Palimpsest License v0.8* - See link:LICENSE-PALIMPSEST.txt[LICENSE-PALIMPSEST.txt]
 
 You may use this software under *either* license.
 
-=== Why Dual License?
-
-- *MIT*: Maximum compatibility and adoption
-- *Palimpsest*: Ethical AI training clauses and reversibility guarantees
-
-Choose the license that best fits your use case.
-
 == Roadmap
 
-- [x] Phase 1: Core extension with 10 patterns ✅
-- [x] Phase 2: 50+ patterns, AST parsing ✅
-- [x] Phase 3: FOLDED and GLYPHED views ✅
-- [ ] Phase 4: WYSIWYG editor
-- [ ] Phase 5: Tutorial system with gamification
-- [ ] Phase 6: Multi-language support (Elm, Haskell, PureScript)
+* [x] Phase 1: Core patterns (15 patterns)
+* [ ] Phase 2: Full pattern library (50+ patterns)
+* [ ] Phase 3: VS Code extension
+* [ ] Phase 4: WYSIWYG editor
+* [ ] Phase 5: Tutorial system with gamification
+* [ ] Phase 6: Multi-language support (Elm, Haskell, PureScript)
 
-== Citations & Academic Work
+== Citations
 
 If you use this project in academic research, please cite:
 
-```bibtex
+[source,bibtex]
+----
 @software{rescript_evangeliser_2024,
   title = {ReScript Evangeliser: Progressive Code Transformation for Learning},
   author = {Hyperpolymath},
@@ -239,40 +227,27 @@ If you use this project in academic research, please cite:
   url = {https://github.com/Hyperpolymath/rescript-evangeliser},
   note = {RSR Bronze-compliant, TPCF Perimeter 3}
 }
-```
-
-Related academic papers in [docs/academic-papers.md](docs/academic-papers.md).
+----
 
 == Community
 
-- *GitHub*: [Issues](https://github.com/Hyperpolymath/rescript-evangeliser/issues) and [Discussions](https://github.com/Hyperpolymath/rescript-evangeliser/discussions)
-- *ReScript Forum*: [forum.rescript-lang.org](https://forum.rescript-lang.org)
-- *Discord*: ReScript community server
+* *GitHub*: https://github.com/Hyperpolymath/rescript-evangeliser/issues[Issues] and https://github.com/Hyperpolymath/rescript-evangeliser/discussions[Discussions]
+* *ReScript Forum*: https://forum.rescript-lang.org[forum.rescript-lang.org]
+* *Discord*: ReScript community server
 
 == Acknowledgments
 
-- *ReScript Team*: For creating an amazing language
-- *Makaton*: Inspiration for the glyph system
-- *VS Code Team*: For excellent extension APIs
-- *Contributors*: See [humans.txt](.well-known/humans.txt)
-
-== Emotional Safety Commitment
-
-This project follows the *Compassionate Code Contribution Pledge (CCCP)*:
-
-- We celebrate developer knowledge and skills
-- We never shame or belittle developers
-- We provide psychologically safe learning environments
-- Mistakes are learning opportunities, not failures
-- See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for full pledge
+* *ReScript Team*: For creating an amazing language
+* *Makaton*: Inspiration for the glyph system
+* *Deno Team*: For the excellent runtime
+* *Contributors*: See link:.well-known/humans.txt[humans.txt]
 
 == Status
 
-- *Version*: 0.1.0 (Alpha)
-- *RSR Level*: Bronze
-- *Test Coverage*: 100%
-- *Build Status*: ✅ Passing
-- *Last Updated*: 2024-11-22
+* *Version*: 0.1.0 (Alpha)
+* *RSR Level*: Bronze
+* *Build Status*: ✅ Passing
+* *Last Updated*: 2024-12-26
 
 ---
 

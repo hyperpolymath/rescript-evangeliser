@@ -1,0 +1,30 @@
+name: Makefile Blocker
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Block Makefiles
+        run: |
+          MAKEFILES=$(find . -maxdepth 3 -type f \( -name "Makefile" -o -name "makefile" -o -name "GNUmakefile" \) 2>/dev/null || true)
+
+          if [ -n "$MAKEFILES" ]; then
+            echo "Makefiles detected. Use justfile instead."
+            echo "$MAKEFILES"
+            echo ""
+            echo "Per Hyperpolymath policy, Makefiles are not permitted."
+            echo "See: https://github.com/hyperpolymath/mustfile"
+            exit 1
+          fi
+          echo "No Makefile found (justfile policy enforced)"
+
+      - name: Verify justfile exists
+        run: |
+          if [ ! -f "justfile" ]; then
+            echo "Warning: justfile not found at repository root"
+            echo "A justfile is recommended for task orchestration"
+          else
+            echo "justfile found"
+          fi

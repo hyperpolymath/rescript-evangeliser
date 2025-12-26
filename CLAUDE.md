@@ -15,9 +15,24 @@ This repository serves as a resource hub for:
 ## Technology Stack
 
 ### Core Technologies
-- **ReScript**: A soundly typed language that leverages JavaScript's ecosystem
-- **Node.js**: Runtime environment for tooling and build processes
-- **npm/yarn**: Package management
+- **ReScript**: Primary application code - compiles to JS, type-safe
+- **Deno**: Runtime & package management - replaces Node/npm/bun
+- **Nickel**: Configuration language - type-safe config
+
+### Language Policy (Hyperpolymath Standard)
+
+**ALLOWED:**
+- ReScript (primary application code)
+- Deno (runtime & package management)
+- Bash/POSIX Shell (scripts, automation)
+- JavaScript (only where ReScript cannot - minimal glue code)
+- Nickel (configuration)
+
+**BANNED:**
+- TypeScript (use ReScript)
+- Node.js (use Deno)
+- npm/bun (use Deno)
+- Makefile (use justfile)
 
 ### Key ReScript Features to Understand
 - **Type Safety**: 100% sound type system with excellent inference
@@ -30,12 +45,18 @@ This repository serves as a resource hub for:
 
 ```
 rescript-evangeliser/
-├── src/              # ReScript source files (.res, .resi)
-├── lib/              # Compiled JavaScript output
-├── examples/         # Example code and demos
+├── src/              # ReScript source files (.res)
+│   ├── Types.res     # Core type definitions
+│   ├── Glyphs.res    # Makaton-inspired glyph system
+│   ├── Narrative.res # Encouraging narrative generation
+│   └── Patterns.res  # Pattern library (50+ patterns)
+├── scripts/          # Deno build/validation scripts
 ├── docs/             # Documentation and guides
-├── tools/            # Utility scripts and tools
-└── bsconfig.json     # ReScript build configuration
+├── rescript.json     # ReScript build configuration
+├── deno.json         # Deno configuration
+├── justfile          # Task orchestration (NOT Makefile)
+├── Mustfile.epx      # Deployment contract
+└── config.ncl        # Nickel configuration
 ```
 
 ## Development Guidelines
@@ -46,6 +67,7 @@ rescript-evangeliser/
 - Prefer pattern matching over if/else when appropriate
 - Leverage the type system to make invalid states unrepresentable
 - Write interface files (.resi) for public APIs
+- Add SPDX license headers to all source files
 
 ### Best Practices
 1. **Type-First Design**: Design types before implementation
@@ -65,22 +87,28 @@ rescript-evangeliser/
 
 ```bash
 # Install dependencies
-npm install
+just install
 
 # Build the project
-npm run build
+just build
 
 # Watch mode for development
-npm run dev
+just watch
 
 # Clean build artifacts
-npm run clean
+just clean
 
 # Run tests
-npm test
+just test
+
+# Validate project structure and policy
+just validate
 
 # Format code
-npm run format
+just fmt
+
+# Full validation
+just validate-rsr
 ```
 
 ## Working with ReScript
@@ -102,80 +130,47 @@ npm run format
 - Create bindings in separate files (e.g., `ExternalLib.res`)
 - Consider contributing bindings to @rescript community packages
 
-## Testing
-
-- Use `rescript-test` or integrate with Jest
-- Write tests alongside source files or in `__tests__` directories
-- Test edge cases and type safety boundaries
-- Include integration tests for JS interop
-
-## Documentation
-
-### For Contributors
-- Document WHY not just WHAT in code comments
-- Update documentation when changing public APIs
-- Include examples in documentation
-- Keep CLAUDE.md updated with architectural decisions
-
-### For Users
-- Provide clear getting started guides
-- Include real-world examples
-- Document common pitfalls and solutions
-- Show migration paths from JavaScript/TypeScript
-
 ## Build System
 
-ReScript uses its own build system (bsb/rescript):
-- Fast incremental compilation
-- Configured via `bsconfig.json`
-- Supports custom generators and middleware
-- Can output CommonJS, ES6 modules, or both
+This project uses:
+- **Deno**: For build scripts and task running
+- **justfile**: For task orchestration (NOT Makefile)
+- **ReScript**: Uses its own compiler (rescript/bsb)
 
-## Key Configuration Files
+### Key Configuration Files
 
-### bsconfig.json
+**rescript.json**
 ```json
 {
   "name": "rescript-evangeliser",
   "sources": ["src"],
-  "package-specs": {
-    "module": "es6",
-    "in-source": true
-  },
-  "suffix": ".js",
-  "bs-dependencies": []
+  "package-specs": { "module": "es6", "in-source": true },
+  "suffix": ".res.js",
+  "uncurried": true
+}
+```
+
+**deno.json**
+```json
+{
+  "tasks": {
+    "build": "deno run -A scripts/build.ts",
+    "validate": "deno run -A scripts/validate.ts"
+  }
 }
 ```
 
 ## Dependencies
 
-### Development Dependencies
-- `rescript`: The ReScript compiler
-- `@rescript/core`: Standard library
-- Additional packages as needed for specific functionality
+### Runtime
+- Deno (latest stable)
+- ReScript 11+
+- @rescript/core
 
-### Peer Dependencies
-- Node.js (LTS version recommended)
-- npm or yarn
-
-## Integration Patterns
-
-### With React
-```rescript
-@react.component
-let make = (~name) => {
-  <div> {React.string("Hello " ++ name)} </div>
-}
-```
-
-### With Node.js
-```rescript
-@module("fs") external readFileSync: string => string = "readFileSync"
-```
-
-### With TypeScript Projects
-- ReScript can generate .d.ts files
-- Use GenType for automatic TypeScript binding generation
+### Package Management
+- **Primary**: Guix (guix.scm)
+- **Fallback**: Nix (flake.nix)
+- **JS deps**: Deno (deno.json imports)
 
 ## Evangelism Goals
 
@@ -184,6 +179,16 @@ let make = (~name) => {
 3. **Share Success Stories**: Document real-world wins
 4. **Build Community**: Foster a welcoming environment
 5. **Create Resources**: Provide learning materials and tools
+
+## Philosophy: "Celebrate Good, Minimize Bad, Show Better"
+
+We **never** shame developers. Instead:
+
+1. **Celebrate**: Recognize what their JavaScript does well
+2. **Minimize**: Gently acknowledge minor limitations
+3. **Better**: Show how ReScript enhances the pattern
+4. **Safety**: Explain type-level guarantees
+5. **Example**: Provide concrete, encouraging examples
 
 ## Resources
 
@@ -197,29 +202,6 @@ let make = (~name) => {
 - Twitter: @rescriptlang
 - ReScript Blog
 
-## Contributing
-
-When contributing to this project:
-1. Ensure code compiles without warnings
-2. Add tests for new functionality
-3. Update documentation as needed
-4. Follow the established code style
-5. Write clear commit messages
-
-## Troubleshooting
-
-### Common Issues
-- **Build errors**: Check `bsconfig.json` for configuration issues
-- **Type errors**: ReScript's error messages are usually helpful; read carefully
-- **JS interop**: Verify external bindings match JavaScript API
-- **Module not found**: Check file paths and module names (case-sensitive)
-
-### Getting Help
-- Check ReScript documentation first
-- Search the forum for similar issues
-- Ask in the ReScript Discord
-- File issues on GitHub for bugs
-
 ## Notes for Claude
 
 When working on this project:
@@ -230,6 +212,10 @@ When working on this project:
 - Encourage best practices in evangelism materials
 - Focus on making ReScript accessible to newcomers
 - Highlight ReScript's unique advantages over TypeScript/JavaScript
+- **Use Deno, not npm/bun**
+- **Use justfile, not Makefile**
+- **Use ReScript, not TypeScript**
+- Add SPDX license headers to new source files
 
 ## Project Philosophy
 
