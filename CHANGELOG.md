@@ -8,33 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Initial project structure
-- Core TypeScript modules (extension.ts, types.ts, glyphs.ts, narrative.ts)
-- 50+ JavaScript → ReScript transformation patterns
-- Four-layer UI architecture (RAW, FOLDED, GLYPHED, WYSIWYG)
-- Makaton-inspired glyph system (21 visual symbols)
-- Encouraging narrative generation system
-- AST-based pattern matching using Babel parser
-- Comprehensive test suite with 100% coverage target
-- RSR Bronze-level compliance
-- Dual licensing (MIT + Palimpsest v0.8)
-- TPCF Perimeter 3 governance framework
-- Offline-first architecture (zero network dependencies)
-- Complete documentation (README, CONTRIBUTING, SECURITY, etc.)
-- .well-known/ directory (security.txt, ai.txt, humans.txt)
-- Build system (justfile, CI/CD, Nix flake)
-- VS Code extension commands and keybindings
-- Pattern library browser
-- Learning path tracker
-- Performance monitoring (<300ms detection, <100MB memory)
-- Privacy-preserving optional telemetry
-- Workspace trust integration
-- Example JavaScript files for testing
-- Tutorial system foundation
-- ReScript example projects (Project 1: Stack)
+- ReScript source files (Types.res, Glyphs.res, Narrative.res, Patterns.res)
+- Deno configuration (deno.json) and build scripts
+- Mustfile.epx deployment contract
+- Nickel configuration (config.ncl)
+- Makefile blocker workflow (enforce justfile usage)
+- npm/bun blocker workflow (enforce Deno usage)
+- SPDX license headers on all ReScript source files
 
 ### Changed
-- N/A (initial release)
+- **BREAKING**: Migrated from TypeScript to ReScript (Hyperpolymath language policy)
+- **BREAKING**: Migrated from npm to Deno (Hyperpolymath language policy)
+- Updated justfile to use Deno tasks instead of npm scripts
+- Updated README.adoc to reflect ReScript/Deno stack
+- Updated CLAUDE.md with new language policy and structure
+- Updated .gitignore for ReScript and Deno artifacts
+
+### Removed
+- TypeScript source files (migrated to ReScript)
+- extension/ directory (old VS Code extension scaffolding)
+- npm package.json (replaced with deno.json)
+- tsconfig.json, eslint configuration (TypeScript tooling)
+- TS_CONVERSION_NEEDED.md (no longer needed)
 
 ### Deprecated
 - N/A (initial release)

@@ -1,0 +1,83 @@
+# Mustfile.epx - Deployment Contract for ReScript Evangeliser
+# SPDX-License-Identifier: MIT OR Palimpsest-0.8
+#
+# This file defines the physical state transitions for deployment.
+# Based on Ephapax Linear Logic - resources are consumed to produce outputs.
+# See: https://github.com/hyperpolymath/mustfile
+
+version: "0.1.0"
+name: rescript-evangeliser
+
+# Package manager routing
+package_managers:
+  primary: guix
+  fallback: nix
+  js_deps: deno
+
+# Build targets and their dependencies
+targets:
+  build:
+    consumes:
+      - src/*.res
+      - rescript.json
+    produces:
+      - src/*.res.js
+    command: deno task build
+
+  clean:
+    consumes: []
+    produces: []
+    command: deno task clean
+
+  validate:
+    consumes:
+      - src/*.res
+      - scripts/*.ts
+    produces: []
+    command: deno task validate
+
+  test:
+    consumes:
+      - src/*.res
+      - src/*.res.js
+    produces: []
+    command: deno task test
+
+# State invariants
+invariants:
+  no_makefile:
+    description: "Makefiles are forbidden"
+    check: "! test -f Makefile && ! test -f makefile && ! test -f GNUmakefile"
+
+  no_typescript_in_src:
+    description: "TypeScript files forbidden in src/"
+    check: "! find src -name '*.ts' -o -name '*.tsx' | grep -q ."
+
+  rescript_exists:
+    description: "ReScript sources must exist"
+    check: "find src -name '*.res' | grep -q ."
+
+  deno_config:
+    description: "Deno configuration must exist"
+    check: "test -f deno.json"
+
+# Deployment routes
+routes:
+  development:
+    steps:
+      - validate
+      - build
+      - test
+
+  ci:
+    steps:
+      - validate
+      - build
+      - test
+
+  release:
+    requires_tag: true
+    steps:
+      - validate
+      - build
+      - test
