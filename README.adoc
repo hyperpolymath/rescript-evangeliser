@@ -1,6 +1,6 @@
 = ReScript Evangeliser
 
-image:https://img.shields.io/badge/license-AGPL--3.0-blue.svg[AGPL-3.0,link="https://www.gnu.org/licenses/agpl-3.0"] image:https://img.shields.io/badge/philosophy-Palimpsest-purple.svg[Palimpsest,link="https://github.com/hyperpolymath/palimpsest-licence"]
+image:https://img.shields.io/badge/license-Palimpsest--MPL--1.0-purple.svg[Palimpsest-MPL-1.0,link="https://github.com/hyperpolymath/palimpsest-license"] image:https://img.shields.io/badge/philosophy-Palimpsest-purple.svg[Palimpsest,link="https://github.com/hyperpolymath/palimpsest-licence"]
 
 image:https://img.shields.io/badge/RSR-Bronze-CD7F32[RSR Bronze,link=docs/RSR_COMPLIANCE.md]
 image:https://img.shields.io/badge/License-MIT-yellow.svg[License: MIT,link=LICENSE-MIT.txt]
@@ -202,7 +202,7 @@ This is a *TPCF Perimeter 3* project - all contributions are welcome!
 
 This project is *dual-licensed*:
 
-1. *MIT License* - See link:LICENSE-MIT.txt[LICENSE-MIT.txt]
+1. *Palimpsest-MPL-1.0 License* - See link:LICENSE-MIT.txt[LICENSE-MIT.txt]
 2. *Palimpsest License v0.8* - See link:LICENSE-PALIMPSEST.txt[LICENSE-PALIMPSEST.txt]
 
 You may use this software under *either* license.
