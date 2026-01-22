@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: PMPL-1.0-or-later
 name: Well-Known Standards (RFC 9116 + RSR)
 on:
   push:
@@ -80,7 +81,8 @@ jobs:
       - name: DNS security records check
         if: hashFiles('CNAME') != ''
         run: |
-          DOMAIN=$(cat CNAME 2>/dev/null | tr -d '\n')
+          DOMAIN=$(cat CNAME 2>/dev/null | tr -d '
+')
           if [ -n "$DOMAIN" ]; then
             echo "Checking DNS for $DOMAIN..."
             # CAA record

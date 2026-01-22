@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: PMPL-1.0-or-later
 name: npm/bun Blocker
 on: [push, pull_request]
 jobs:
@@ -12,16 +13,20 @@ jobs:
           NEW_BUN=$(git diff --name-only --diff-filter=A HEAD~1 2>/dev/null | grep -E 'bun\.lockb$' || true)
 
           # Check for npm scripts calling npm/bun in new or modified files
-          NPM_CALLS=$(git diff HEAD~1 2>/dev/null | grep -E '^\+.*\b(npm|bun)\s+(run|install|start|test|build)' | grep -v '#' || true)
+          NPM_CALLS=$(git diff HEAD~1 2>/dev/null | grep -E '^\+.*(npm|bun)\s+(run|install|start|test|build)' | grep -v '#' || true)
 
           ERRORS=""
 
           if [ -n "$NEW_BUN" ]; then
-            ERRORS="${ERRORS}New bun.lockb detected. Use Deno instead.\n${NEW_BUN}\n"
+            ERRORS="${ERRORS}New bun.lockb detected. Use Deno instead.
+${NEW_BUN}
+"
           fi
 
           if [ -n "$NPM_CALLS" ]; then
-            ERRORS="${ERRORS}npm/bun commands in new code. Use Deno tasks instead.\n${NPM_CALLS}\n"
+            ERRORS="${ERRORS}npm/bun commands in new code. Use Deno tasks instead.
+${NPM_CALLS}
+"
           fi
 
           if [ -n "$ERRORS" ]; then
