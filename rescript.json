@@ -1,28 +1,27 @@
 {
   "name": "rescript-evangeliser",
-  "version": "0.1.0",
   "sources": [
     {
       "dir": "src",
       "subdirs": true
     },
     {
-      "dir": "scripts",
-      "subdirs": false
+      "dir": "test",
+      "subdirs": true,
+      "type": "dev"
     }
   ],
   "package-specs": [
     {
-      "module": "es6",
+      "module": "esmodule",
       "in-source": true
     }
   ],
   "suffix": ".res.js",
-  "bs-dependencies": [
+  "dependencies": [
     "@rescript/core"
   ],
   "warnings": {
     "number": "+a-4-9-27-40-42-48-50-61-102-109"
-  },
-  "uncurried": true
+  }
 }

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: PMPL-1.0-or-later
 # RSR-compliant .gitignore
 
 # OS & Editor
@@ -44,6 +44,7 @@ erl_crash.dump
 *.res.js
 *.bs.js
 .merlin
+!/test/run_all.js
 
 # Deno
 deno.lock
@@ -57,7 +58,9 @@ __pycache__/
 # Ada/SPARK
 *.ali
 /obj/
-/bin/
+
+# CLI entry point (track this, even though it's JS)
+!/bin/evangeliser.js
 
 # Haskell
 /.stack-work/

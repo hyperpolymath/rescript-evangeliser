@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT OR Palimpsest-0.8
+// SPDX-License-Identifier: PMPL-1.0-or-later
 // Makaton-inspired glyph system for ReScript Evangeliser
 // Glyphs transcend syntax to show semantic meaning.
 
