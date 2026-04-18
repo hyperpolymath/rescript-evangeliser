@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: PMPL-1.0-or-later
+# Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+#
+# k9iser manifest for nextgen-languages-evangeliser
+# Nextgen typed-language evangelism tool — Deno-based tooling to assist AffineScript/ReScript adoption and advocacy
+
+[project]
+name = "nextgen-languages-evangeliser"
+safety_tier = "hunt"
+
+[[source]]
+path = "deno.json"
+type = "deno"
+output = "generated/k9iser/deno-workspace.k9"
+
+[[source]]
+path = "Justfile"
+type = "justfile"
+output = "generated/k9iser/justfile-recipes.k9"
+
+[[constraint]]
+rule = "build.dependencies has no banned_packages"
+severity = "error"
+
+[[constraint]]
+rule = "deno.imports has no npm: specifiers"
+severity = "error"

@@ -1,0 +1,273 @@
+# SPDX-License-Identifier: MPL-2.0-or-later
+name: CI
+
+on:
+  push:
+    branches: [ main, develop, 'claude/**' ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 2am UTC to catch dependency issues
+    - cron: '0 2 * * *'
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    if: hashFiles('extension/package.json') != ''
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [20.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: extension/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd extension
+        npm ci
+
+    - name: Lint
+      run: |
+        cd extension
+        npm run lint
+
+    - name: Type check
+      run: |
+        cd extension
+        npx tsc --noEmit
+
+    - name: Compile
+      run: |
+        cd extension
+        npm run compile
+
+    - name: Run tests
+      run: |
+        cd extension
+        npm test
+
+    - name: Run coverage
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        cd extension
+        npm run test:coverage
+
+    - name: Upload coverage to Codecov
+      if: matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@ab904c41d6ece82784817410c45d8b8c02684457 # v3
+      with:
+        files: ./extension/coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    if: hashFiles('extension/package.json') != ''
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        cache-dependency-path: extension/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd extension
+        npm ci
+
+    - name: Run security audit
+      run: |
+        cd extension
+        npm audit --audit-level=moderate
+
+    - name: Check for vulnerable dependencies
+      run: |
+        cd extension
+        npx audit-ci --moderate
+
+  rsr-compliance:
+    name: RSR Compliance Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+    - name: Check required files
+      run: |
+        echo "Checking RSR Bronze compliance..."
+
+        # Documentation
+        test -f README.md || (echo "Missing README.md" && exit 1)
+        test -f CONTRIBUTING.md || (echo "Missing CONTRIBUTING.md" && exit 1)
+        test -f CODE_OF_CONDUCT.md || (echo "Missing CODE_OF_CONDUCT.md" && exit 1)
+        test -f SECURITY.md || (echo "Missing SECURITY.md" && exit 1)
+        test -f MAINTAINERS.md || (echo "Missing MAINTAINERS.md" && exit 1)
+        test -f CHANGELOG.md || (echo "Missing CHANGELOG.md" && exit 1)
+        test -f CLAUDE.md || (echo "Missing CLAUDE.md" && exit 1)
+
+        # Licenses
+        test -f LICENSE-MIT.txt || (echo "Missing LICENSE-MIT.txt" && exit 1)
+        test -f LICENSE-PALIMPSEST.txt || (echo "Missing LICENSE-PALIMPSEST.txt" && exit 1)
+
+        # .well-known/
+        test -f .well-known/security.txt || (echo "Missing security.txt" && exit 1)
+        test -f .well-known/ai.txt || (echo "Missing ai.txt" && exit 1)
+        test -f .well-known/humans.txt || (echo "Missing humans.txt" && exit 1)
+
+        # Build system
+        test -f justfile || (echo "Missing justfile" && exit 1)
+
+        echo "✅ RSR Bronze compliance verified!"
+
+  build:
+    name: Build Extension
+    runs-on: ubuntu-latest
+    needs: [test, security, rsr-compliance]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        cache-dependency-path: extension/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd extension
+        npm ci
+
+    - name: Compile
+      run: |
+        cd extension
+        npm run compile
+
+    - name: Package extension
+      run: |
+        cd extension
+        npx vsce package
+
+    - name: Upload VSIX artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: nextgen-languages-evangeliser-vsix
+        path: extension/*.vsix
+
+  performance:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        cache-dependency-path: extension/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd extension
+        npm ci
+
+    - name: Run benchmarks
+      run: |
+        cd extension
+        # TODO: Add benchmark script
+        echo "Benchmarks would run here"
+
+  docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: '20.x'
+
+    - name: Generate docs
+      run: |
+        echo "Documentation generation would run here"
+        # TODO: Add typedoc or similar
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        cache-dependency-path: extension/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd extension
+        npm ci
+
+    - name: Package extension
+      run: |
+        cd extension
+        npx vsce package
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: extension/*.vsix
+        generate_release_notes: true
+        draft: false
+        prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # Uncomment when ready to publish to marketplace
+    # - name: Publish to VS Code Marketplace
+    #   run: |
+    #     cd extension
+    #     npx vsce publish
+    #   env:
+    #     VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+    # - name: Publish to Open VSX
+    #   run: |
+    #     cd extension
+    #     npx ovsx publish
+    #   env:
+    #     OVSX_PAT: ${{ secrets.OVSX_PAT }}

@@ -1,0 +1,161 @@
+# GitLab CI configuration for Nextgen Languages Evangeliser
+
+image: node:20
+
+stages:
+  - lint
+  - test
+  - build
+  - security
+  - deploy
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  SECURE_FILES_DOWNLOAD_PATH: "$CI_PROJECT_DIR/.secure"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+    - extension/node_modules/
+
+before_script:
+  - cd extension
+  - npm ci --cache .npm --prefer-offline
+
+# Linting stage
+lint:
+  stage: lint
+  script:
+    - npm run lint
+  allow_failure: false
+
+type-check:
+  stage: lint
+  script:
+    - npx tsc --noEmit
+  allow_failure: false
+
+# Test stage
+test:
+  stage: test
+  script:
+    - npm test
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - extension/coverage/
+    expire_in: 7 days
+
+test:node20:
+  stage: test
+  image: node:20
+  script:
+    - npm test
+
+test:node18:
+  stage: test
+  image: node:18
+  script:
+    - npm test
+  allow_failure: true
+
+# Build stage
+compile:
+  stage: build
+  script:
+    - npm run compile
+  artifacts:
+    paths:
+      - extension/out/
+    expire_in: 7 days
+
+package:
+  stage: build
+  needs: [compile]
+  script:
+    - npx vsce package
+  artifacts:
+    paths:
+      - extension/*.vsix
+    expire_in: 30 days
+
+# Security stage
+security-audit:
+  stage: security
+  script:
+    - npm audit --audit-level=moderate
+  allow_failure: false
+
+rsr-compliance:
+  stage: security
+  script:
+    - |
+      echo "Checking RSR Bronze compliance..."
+
+      # Documentation
+      test -f ../README.md || (echo "Missing README.md" && exit 1)
+      test -f ../CONTRIBUTING.md || (echo "Missing CONTRIBUTING.md" && exit 1)
+      test -f ../CODE_OF_CONDUCT.md || (echo "Missing CODE_OF_CONDUCT.md" && exit 1)
+      test -f ../SECURITY.md || (echo "Missing SECURITY.md" && exit 1)
+      test -f ../MAINTAINERS.md || (echo "Missing MAINTAINERS.md" && exit 1)
+      test -f ../CHANGELOG.md || (echo "Missing CHANGELOG.md" && exit 1)
+
+      # Licenses
+      test -f ../LICENSE-MIT.txt || (echo "Missing LICENSE-MIT.txt" && exit 1)
+      test -f ../LICENSE-PALIMPSEST.txt || (echo "Missing LICENSE-PALIMPSEST.txt" && exit 1)
+
+      # .well-known/
+      test -f ../.well-known/security.txt || (echo "Missing security.txt" && exit 1)
+      test -f ../.well-known/ai.txt || (echo "Missing ai.txt" && exit 1)
+      test -f ../.well-known/humans.txt || (echo "Missing humans.txt" && exit 1)
+
+      echo "✅ RSR Bronze compliance verified!"
+
+dependency-scan:
+  stage: security
+  script:
+    - npx audit-ci --moderate
+  allow_failure: true
+
+# Pages (documentation)
+pages:
+  stage: deploy
+  only:
+    - main
+  script:
+    - mkdir -p public
+    - cp -r ../docs/* public/ || echo "No docs yet"
+    - echo "Documentation deployed"
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+
+# Release (manual trigger)
+release:
+  stage: deploy
+  when: manual
+  only:
+    - tags
+  script:
+    - npx vsce package
+    - echo "Extension packaged for release"
+  artifacts:
+    paths:
+      - extension/*.vsix
+    expire_in: 90 days
+
+# Performance benchmarks
+performance:
+  stage: test
+  only:
+    - main
+  script:
+    - echo "Running performance benchmarks..."
+    # TODO: Add benchmark script
+  allow_failure: true
