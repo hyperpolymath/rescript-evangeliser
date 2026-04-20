@@ -22,6 +22,7 @@ let testAllCategoriesHavePatterns = () => {
     Variants, Modules, TypeSafety, Immutability, PatternMatching,
     PipeOperator, OopToFp, ClassesToRecords, InheritanceToComposition,
     StateMachines, DataModeling,
+    ResourceSafety, Aliasing, Disposal,
   ]
 
   let missingCategories = categories->Array.filter(cat => {
@@ -35,7 +36,7 @@ let testAllCategoriesHavePatterns = () => {
       ->Array.join(", ")
     JsError.throwWithMessage(`FAIL: Categories with no patterns: ${missing}`)
   }
-  Console.log("PASS: All 21 categories have at least one pattern")
+  Console.log("PASS: All 24 categories have at least one pattern")
 }
 
 let testPatternIdsAreUnique = () => {
