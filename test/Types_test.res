@@ -35,7 +35,11 @@ let testCategoryToString = () => {
   )
   assert_(categoryToString(StateMachines) === "state-machines", "StateMachines -> state-machines")
   assert_(categoryToString(DataModeling) === "data-modeling", "DataModeling -> data-modeling")
-  Console.log("PASS: categoryToString - all 21 categories")
+  // Phase 2 categories
+  assert_(categoryToString(ResourceSafety) === "resource-safety", "ResourceSafety -> resource-safety")
+  assert_(categoryToString(Aliasing) === "aliasing", "Aliasing -> aliasing")
+  assert_(categoryToString(Disposal) === "disposal", "Disposal -> disposal")
+  Console.log("PASS: categoryToString - all 24 categories")
 }
 
 let testDifficultyToString = () => {

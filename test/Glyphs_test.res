@@ -60,6 +60,7 @@ let testGetGlyphsForPattern = () => {
     Variants, Modules, TypeSafety, Immutability, PatternMatching,
     PipeOperator, OopToFp, ClassesToRecords, InheritanceToComposition,
     StateMachines, DataModeling,
+    ResourceSafety, Aliasing, Disposal,
   ]
 
   categories->Array.forEach(cat => {
@@ -69,7 +70,7 @@ let testGetGlyphsForPattern = () => {
       `${categoryToString(cat)} should have 3 glyphs, got ${Int.toString(glyphs->Array.length)}`,
     )
   })
-  Console.log("PASS: getGlyphsForPattern - all 21 categories map to 3 glyphs each")
+  Console.log("PASS: getGlyphsForPattern - all 24 categories map to 3 glyphs each")
 }
 
 let testAnnotateWithGlyphs = () => {
