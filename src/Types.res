@@ -28,6 +28,10 @@ type patternCategory =
   | InheritanceToComposition
   | StateMachines
   | DataModeling
+  // Phase 2 — affine/linear-safety-focused categories.
+  | ResourceSafety
+  | Aliasing
+  | Disposal
 
 type semanticCategory =
   | Transformation
@@ -37,9 +41,6 @@ type semanticCategory =
   | State
   | Data
 
-// Target languages the evangeliser can emit examples for.
-// AffineScript is the flagship (Phase 2 onward); ReScript is the legacy
-// catalogue preserved during migration. Others are planned (Phase 5+).
 type targetLang =
   | AffineScript
   | ReScript
@@ -47,10 +48,8 @@ type targetLang =
   | Gleam
   | Zig
 
-// Flagship target — consumed by Cli/Output when --target is not specified.
 let flagshipTarget: targetLang = AffineScript
 
-// A Makaton-inspired glyph that represents semantic meaning beyond syntax
 type glyph = {
   symbol: string,
   name: string,
@@ -59,7 +58,6 @@ type glyph = {
   usageExample: string,
 }
 
-// Encouraging narrative following "Celebrate, Minimize, Better" philosophy
 type narrative = {
   celebrate: string,
   minimize: string,
@@ -68,17 +66,11 @@ type narrative = {
   example: string,
 }
 
-// A single target-language example for a pattern.
-// In Phase 1b, only `code` varies per target; narrative is shared at
-// pattern level. In Phase 2 this record can gain an optional per-target
-// narrative override so AffineScript's affine-safety pitch differs from
-// ReScript's Option-type pitch.
 type targetExample = {
   language: targetLang,
   code: string,
 }
 
-// A transformation pattern from JavaScript to one or more target languages.
 type pattern = {
   id: string,
   name: string,
@@ -87,10 +79,6 @@ type pattern = {
   jsPattern: string,
   confidence: float,
   jsExample: string,
-  // Multi-target: each entry pairs a target language with its example code.
-  // Patterns must have at least one target; the first target is used as
-  // fallback if --target requests a language this pattern has not been
-  // ported to yet.
   targets: array<targetExample>,
   narrative: narrative,
   glyphs: array<string>,
@@ -101,7 +89,6 @@ type pattern = {
   bestPractices: array<string>,
 }
 
-// A matched pattern in user's code
 type patternMatch = {
   pattern: pattern,
   code: string,
@@ -111,7 +98,6 @@ type patternMatch = {
   transformation: option<string>,
 }
 
-// Analysis result for a file or selection
 type analysisResult = {
   matches: array<patternMatch>,
   totalPatterns: int,
@@ -122,7 +108,6 @@ type analysisResult = {
   memoryUsed: int,
 }
 
-// User's learning progress
 type rec learningProgress = {
   patternsCompleted: Set.t<string>,
   currentDifficulty: difficultyLevel,
@@ -140,7 +125,6 @@ and achievement = {
   unlockedAt: option<Date.t>,
 }
 
-// Extension configuration
 type extensionConfig = {
   defaultView: viewLayer,
   showNarratives: bool,
@@ -151,14 +135,12 @@ type extensionConfig = {
   customPatternPaths: array<string>,
 }
 
-// Pattern statistics
 type patternStats = {
   total: int,
   byCategory: Dict.t<int>,
   byDifficulty: Dict.t<int>,
 }
 
-// Helper functions for category string conversion
 let categoryToString = (category: patternCategory): string => {
   switch category {
   | NullSafety => "null-safety"
@@ -182,6 +164,9 @@ let categoryToString = (category: patternCategory): string => {
   | InheritanceToComposition => "inheritance-to-composition"
   | StateMachines => "state-machines"
   | DataModeling => "data-modeling"
+  | ResourceSafety => "resource-safety"
+  | Aliasing => "aliasing"
+  | Disposal => "disposal"
   }
 }
 
@@ -202,7 +187,6 @@ let viewLayerToString = (view: viewLayer): string => {
   }
 }
 
-// Canonical string name for a target language (lowercase, used in CLI args).
 let targetLangToString = (t: targetLang): string => {
   switch t {
   | AffineScript => "affinescript"
@@ -213,7 +197,6 @@ let targetLangToString = (t: targetLang): string => {
   }
 }
 
-// Display-friendly label (capitalisation for rendering).
 let targetLangLabel = (t: targetLang): string => {
   switch t {
   | AffineScript => "AffineScript"
@@ -224,7 +207,6 @@ let targetLangLabel = (t: targetLang): string => {
   }
 }
 
-// Markdown / Rouge syntax-highlighter tag for a target language.
 let targetLangSyntaxTag = (t: targetLang): string => {
   switch t {
   | AffineScript => "affinescript"
@@ -246,15 +228,10 @@ let stringToTargetLang = (s: string): option<targetLang> => {
   }
 }
 
-// Find the example code for a specific target language in a pattern.
-// Returns None if the pattern has no entry for that target.
 let patternExampleFor = (p: pattern, lang: targetLang): option<targetExample> => {
   p.targets->Array.find(t => t.language == lang)
 }
 
-// Get the code string for a specific target, falling back to the first
-// available target if the requested one is not present. Empty string if
-// the pattern has no targets at all (should never happen in practice).
 let patternCodeFor = (p: pattern, lang: targetLang): string => {
   switch patternExampleFor(p, lang) {
   | Some(t) => t.code
@@ -266,8 +243,6 @@ let patternCodeFor = (p: pattern, lang: targetLang): string => {
   }
 }
 
-// The effective target for a pattern given a requested target: the
-// requested one if supported, else the pattern's first target (fallback).
 let patternEffectiveTarget = (p: pattern, requested: targetLang): targetLang => {
   switch patternExampleFor(p, requested) {
   | Some(_) => requested
