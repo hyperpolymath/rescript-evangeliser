@@ -165,9 +165,6 @@ let format = (result: analysisResult, view: viewLayer, outputFormat: string, tar
 }
 
 // Format the pattern list for the `patterns` command.
-// Annotates each pattern with the set of targets it currently supports,
-// so users can see at a glance which patterns have been ported to
-// AffineScript and which are still ReScript-only.
 let formatPatternList = (format: string): string => {
   let stats = Patterns.getPatternStats()
   let header = switch format {
@@ -183,6 +180,8 @@ let formatPatternList = (format: string): string => {
     Variants, Modules, TypeSafety, Immutability, PatternMatching,
     PipeOperator, OopToFp, ClassesToRecords, InheritanceToComposition,
     StateMachines, DataModeling,
+    // Phase 2 — affine/linear-safety categories (AffineScript flagship).
+    ResourceSafety, Aliasing, Disposal,
   ]
 
   let body =
