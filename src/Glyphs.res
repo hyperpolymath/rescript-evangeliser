@@ -300,5 +300,9 @@ let getGlyphsForPattern = (patternCategory: patternCategory): array<string> => {
   | InheritanceToComposition => [`🔗`, `🧩`, `📦`]
   | StateMachines => [`🌿`, `🧩`, `✅`]
   | DataModeling => [`🧩`, `📦`, `🎯`]
+  // Phase 2 (affine/linear-safety focus):
+  | ResourceSafety => [`🔒`, `🛡️`, `⏳`]
+  | Aliasing => [`🔒`, `🔗`, `💎`]
+  | Disposal => [`⏳`, `🔒`, `✅`]
   }
 }
